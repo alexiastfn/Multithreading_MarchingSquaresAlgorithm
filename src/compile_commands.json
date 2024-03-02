@@ -1,0 +1,17 @@
+[
+ {
+  "directory": "/Users/alexiastefan/Documents/facultate/3rd/apd/tema1-master/src",
+  "arguments": [
+   "gcc",
+   "tema1_par.c",
+   "helpers.c",
+   "-o",
+   "tema1_par",
+   "-lm",
+   "-lpthread",
+   "-Wall",
+   "-Wextra"
+  ],
+  "file": "helpers.c"
+ }
+]

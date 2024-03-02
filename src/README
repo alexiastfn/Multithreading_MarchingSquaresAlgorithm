@@ -1,0 +1,44 @@
+Stefan Alexia 332CB
+Tema1 ADP
+
+In urma analizarii codului secvential, mi-am creat o structura my_struct cu parametrii ce caracterizeaza
+un thread, pentru a evita variabilele globale (bariera, id-ul threadului, nr de threaduri - folosit in formula de la
+lab cu start/end, initial_image sau final_image - pt cand am o noua imagine scalata la rezolutia ceruta,
+step_x, step_y, grid, contour_map).
+
+    1. main()
+
+In main() folosesc variabila image pentru imaginea care urmeaza a fi prelucrata, aloc spatiu pentru new_image (pentru in
+cazul in care image va depasi rezolutia de 2048 x 2048), aloc spatiu pentru grid, initializez bariera si contour_mapul.
+
+Urmeaza bucla in care creez num_threads threaduri, popularizand fieldurile structurii my_struct.
+
+Urmatoarea bucla este pentru a face join la threaduri (pentru a face threadul corespunzator main-ului sa astepte dupa
+threadurile create de mine).
+
+La urma, dupa join, dezaloc bariera ce este folosita in functia de threaduri my_thread_function, apelez write_ppm pentru
+outputul final si dau free la imaginea de output, contour_map, grid.
+
+    2. my_thread_function()
+
+Analizand codul secvential, am ajuns la concluzia ca trebuie paralelizate functiile: rescale_image(), sample_grid() si
+march().
+Am adaptat cele 3 functii enumerate mai sus si le-am "delimitat" in cadrul functiei mele, folosind (si refolosind) o
+bariera (my_barrier).
+
+=> Pentru partea de rescale:
+Verific daca imaginea initiala primita ca input are rezolutia ceruta. In cazul in care nu o are, ma folosesc de codul
+secvential din rescale_image() pe care il adaptez prin formula din lab cu start/end, astfel incat sa evit race condition
+si sa ma asigura ca oricare doua threaduri nu itereaza prin aceeasi indici.
+La finalul if-ului, ma folosesc de pthread_barrier_wait(my_barrier) pentru a ma asigura ca inainte de a trece in partea
+ce tine de grid, toate thread-urile au facut partea/verificarea de rescale.
+
+=> Pentru partea de grid:
+In aceasta parte a functiei, construiesc matricea grid (cea din etapa algoritmului populata cu 0 sau 1).
+Din nou, am trei bucle de for, fiecare din ele adaptata din varianta secventiala prin formula cu start/end.
+La final, inainte de a trece la partea de march, refolosesc bariera pentru sincronizarea threadurilor.
+
+=> Pentru partea de march:
+Din nou, ma inspir din codul secvential si adaptez prin folosirea formulei cu start/end.
+
+
